@@ -37,16 +37,12 @@
 #define SHIFT_CLK PORTCbits.RC3   // Shift Register clock (SRCLK)
 #define SHIFT_LATCH PORTCbits.RC4   // Latch Pin Clock (RCLK)
 
-//#define SHIFT0_DATA PORTAbits.RA5   // Data pin (SER)
-//#define SHIFT1_DATA PORTAbits.RA4   // Data pin (SER)
-//#define SHIFT2_DATA PORTCbits.RC5   // Data pin (SER)
-
-#define SHIFT0_DATA PORTCbits.RC5   // Data pin (SER)
+#define SHIFT0_DATA PORTAbits.RA5   // Data pin (SER)
 #define SHIFT1_DATA PORTAbits.RA4   // Data pin (SER)
-#define SHIFT2_DATA PORTAbits.RA5   // Data pin (SER)
+#define SHIFT2_DATA PORTCbits.RC5   // Data pin (SER)
 
 
-#define PUSH_BUTTON PORTBbits.RB5 //The middle button 
+#define PUSH_BUTTON PORTBbits.RB5
 
 //_____ Global variables ______
 
@@ -160,9 +156,8 @@ void setGlobalInterrupts(){
     INTCONbits.GIE = 1;    // Enable global interrupts
 }
 
-char SPI_Read() //Read the received data
-{
-    while ( !SSP1STATbits.BF ); // Hold till BF bit is set, to make sure the complete data is read
+char SPIRead(){
+    while ( !SSP1STATbits.BF ); // Hold till BF bit is set
     
     return(SSP1BUF); // return the read data
 }
@@ -192,7 +187,7 @@ void __interrupt() ISR(void) {
 
         if( SSP1CON1bits.SSP1OV == 1 ){
             //There is a data overflow error. Discard the received byte
-            SPI_Read();
+            SPIRead();
             SSP1CON1bits.SSP1OV = 0; //clear overflow flag
         }else{
             // Read the received data from SPI Buffer
